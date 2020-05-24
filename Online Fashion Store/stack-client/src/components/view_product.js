@@ -21,7 +21,9 @@ const initialState = {
     quantityError:"",
     com:"",
     comError:"",
-    all_com:[]
+    all_com:[],
+    rate:"",
+    rateError:"",
 }
 
 class product_view extends React.Component {
@@ -128,7 +130,7 @@ class product_view extends React.Component {
         if(localStorage.getItem('email')){
             const correctAll = this.validation();
             if(correctAll){
-                const data = { product: localStorage.getItem('product_ID'), user: localStorage.getItem('email'), message: this.state.com }
+                const data = { product: localStorage.getItem('product_ID'), user: localStorage.getItem('email'), message: this.state.com , rate: this.state.rate}
                 comApi.comment().create(data)
                 .then(res => {
                     swal("Success!", "Add successful!", "success")
@@ -143,13 +145,18 @@ class product_view extends React.Component {
 
     validation = () => {
         let comError = "";
+        let rateError ="";
 
         if(!this.state.com){
             comError="Comment Required!"
         }
 
-        if(comError){
-            this.setState({ comError });
+        if(!this.state.rate){
+            rateError="Rate Required!"
+        }
+
+        if(comError||rateError){
+            this.setState({ comError , rateError });
             return false;
         }
 
@@ -187,6 +194,20 @@ class product_view extends React.Component {
                     <hr/>
                     <form autoComplete="off" onSubmit={this.SubmitForm}>
                         <div class="form-group row">
+                            <label for="email_address" class="col-md-4 col-form-label text-md-right">Ratings</label>
+                                <div class="col-md-6">
+                                <fieldset  value={this.state.rate} onChange={this.handleChange}>
+                                    <input type="radio" name="rate" value="1"/><label for="rate"> 1 Star</label>
+                                    <input type="radio" name="rate" value="2"/><label for="rate"> 2 Star</label>
+                                    <input type="radio" name="rate" value="3"/><label for="rate"> 3 Star</label>
+                                    <input type="radio" name="rate" value="4"/><label for="rate"> 4 Star</label>
+                                    <input type="radio" name="rate" value="5"/><label for="rate"> 5 Star</label>
+                                </fieldset>
+                                <div style={{color : "red"}}>{this.state.rateError}</div>
+                            </div>
+                        </div>  
+
+                        <div class="form-group row">
                             <label for="email_address" class="col-md-4 col-form-label text-md-right">Comment</label>
                             <div class="col-md-6">
                                 <input type="text" class="form-control" name="com" value={this.state.com} onChange={this.handleChange} />
@@ -205,7 +226,7 @@ class product_view extends React.Component {
                         all_com.map((com_one) =>
                         <tr>
                             <td><h5>{ com_one.user }</h5></td>
-                            <td width="50%"><p>{ com_one.message }</p></td>
+                            <td width="50%"><p>{ com_one.message } / Rating : { com_one.rate }</p></td>
                             <td>{ this.comments_btn(com_one.user,com_one._id)}</td>
                         </tr>
                         
