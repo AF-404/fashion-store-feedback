@@ -16,7 +16,8 @@ router.post('/', (req, res) => {
     const newRecord = new Comment({
         product: req.body.product,
         user:req.body.user,
-        message: req.body.message
+        message: req.body.message,
+        rate: req.body.rate
     })
 
     newRecord.save((err, docs) => {
